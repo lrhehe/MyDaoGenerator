@@ -7,9 +7,10 @@ import de.greenrobot.daogenerator.Schema;
 public class MyDaoGenerator {
 
     public static void main(String args[]) throws Exception {
-        Schema schema = new Schema(1, "com.ddup.dbdata");
+        Schema schema = new Schema(2, "com.ddup.dbdata");
         Entity goal = addGoal(schema);
-        addGoalCategory(schema, goal);
+        Entity goalCategory = addGoalCategory(schema, goal);
+        addActions(schema, goal, goalCategory);
         new DaoGenerator().generateAll(schema, args[0]);
     }
 
@@ -18,22 +19,30 @@ public class MyDaoGenerator {
         goal.setHasKeepSections(true);
         goal.implementsSerializable();
         goal.addIdProperty();
-        goal.addShortProperty("desc");
+        goal.addStringProperty("desc");
         goal.addLongProperty("createTime");
-        goal.addStringProperty("status");
+        goal.addBooleanProperty("invalid");
         return goal;
     }
 
-    private static void addGoalCategory(Schema schema, Entity goal) {
+    private static Entity addGoalCategory(Schema schema, Entity goal) {
         Entity goalCategory = schema.addEntity("GoalCategory");
         goalCategory.setHasKeepSections(true);
         goalCategory.implementsSerializable();
         goalCategory.addIdProperty();
-        goalCategory.addShortProperty("desc");
+        goalCategory.addStringProperty("desc");
         goalCategory.addLongProperty("createTime");
-        goalCategory.addStringProperty("status");
-
+        goalCategory.addBooleanProperty("invalid");
         goalCategory.addToMany(goal, goal.addLongProperty("categoryId").getProperty());
+        return goalCategory;
+    }
 
+    private static void addActions(Schema schema, Entity goal, Entity goalCategory){
+        Entity action = schema.addEntity("Action");
+        action.addIdProperty();
+        action.addLongProperty("time");
+        action.addStringProperty("status");
+        action.addToOne(goal, action.addLongProperty("goalId").getProperty());
+        action.addToOne(goalCategory, action.addLongProperty("goalCategoryId").getProperty());
     }
 }
