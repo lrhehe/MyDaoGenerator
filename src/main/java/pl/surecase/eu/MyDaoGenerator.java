@@ -7,7 +7,7 @@ import de.greenrobot.daogenerator.Schema;
 public class MyDaoGenerator {
 
     public static void main(String args[]) throws Exception {
-        Schema schema = new Schema(2, "com.ddup.dbdata");
+        Schema schema = new Schema(3, "com.ddup.dbdata");
         Entity goal = addGoal(schema);
         Entity goalCategory = addGoalCategory(schema, goal);
         addActions(schema, goal, goalCategory);
@@ -33,6 +33,7 @@ public class MyDaoGenerator {
         goalCategory.addStringProperty("desc");
         goalCategory.addLongProperty("createTime");
         goalCategory.addBooleanProperty("invalid");
+        goalCategory.addStringProperty("timePeriod");
         goalCategory.addToMany(goal, goal.addLongProperty("categoryId").getProperty());
         return goalCategory;
     }
@@ -42,6 +43,7 @@ public class MyDaoGenerator {
         action.addIdProperty();
         action.addLongProperty("time");
         action.addStringProperty("status");
+        action.addStringProperty("timePeriod");
         action.addToOne(goal, action.addLongProperty("goalId").getProperty());
         action.addToOne(goalCategory, action.addLongProperty("goalCategoryId").getProperty());
     }
